@@ -1,0 +1,6 @@
+{
+  "name": "HTTP Monitor",
+  "description": "Independent Laravel Telescope-style HTTP request monitoring platform for PHP and web applications with real-time WebSockets, metrics, filters, and alerts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

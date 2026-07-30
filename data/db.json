@@ -1,0 +1,39 @@
+{
+  "applications": [
+    {
+      "id": "app_principal",
+      "name": "Aplicação Principal",
+      "token": "tok_app_principal_8f92a",
+      "environment": "production",
+      "color": "#6366f1",
+      "active": true,
+      "created_at": "2026-07-30T20:18:00.000Z",
+      "updated_at": "2026-07-30T20:18:00.000Z",
+      "last_seen_at": "2026-07-30T20:18:00.000Z",
+      "total_requests_today": 0
+    }
+  ],
+  "logs": [],
+  "alert_rules": [
+    {
+      "id": "rule_1",
+      "name": "Mais de 20 erros 500 em 1 minuto",
+      "type": "error_threshold",
+      "threshold_value": 20,
+      "time_window_seconds": 60,
+      "enabled": true,
+      "created_at": "2026-07-30T20:18:00.000Z"
+    },
+    {
+      "id": "rule_2",
+      "name": "Tempo médio acima de 2 segundos",
+      "type": "latency_threshold",
+      "threshold_value": 2000,
+      "time_window_seconds": 60,
+      "enabled": true,
+      "created_at": "2026-07-30T20:18:00.000Z"
+    }
+  ],
+  "triggered_alerts": [],
+  "saved_filters": []
+}
