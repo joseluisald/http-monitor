@@ -60,36 +60,50 @@ class HttpMonitorMiddleware
 }`,
 
     symfony: `<?php
-// Exemplo Symfony HttpClient (Symfony\\Component\\HttpClient\\HttpClient)
 use Symfony\\Component\\HttpClient\\HttpClient;
 
-$client = HttpClient::create();
+class HttpLogger
+{
+    private static string $monitorUrl = '${appUrl}/api/http';
+    private static string $bearerToken = '${token}';
 
-try {
-    $response = $client->request('POST', '${appUrl}/api/http', [
-        'auth_bearer' => '${token}',
-        'headers' => [
-            'Content-Type' => 'application/json',
-        ],
-        'json' => [
-            'method' => 'POST',
-            'url' => 'https://sua-api.com.br/v1/pedidos',
-            'host' => 'sua-api.com.br',
-            'path' => '/v1/pedidos',
-            'status' => 200,
-            'duration' => 110,
-            'memory_usage' => memory_get_usage(),
-            'peak_memory' => memory_get_peak_usage(),
-            'remote_ip' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
-            'origin' => 'WEB',
-            'usuario_logado' => 'usuario@empresa.com.br',
-            'request_body' => ['item_id' => 102, 'quantidade' => 2],
-            'response_body' => ['status' => 'sucesso', 'pedido_id' => 9582],
-        ],
-        'timeout' => 2.0,
-    ]);
-} catch (\\Throwable $e) {
-    // Silently handle monitoring failures
+    public static function log(
+        string $method,
+        string $url,
+        int $statusCode,
+        float $durationMs,
+        mixed $requestData = null,
+        mixed $responseData = null,
+        ?string $exceptionMessage = null
+    ): void {
+        try {
+            $client = HttpClient::create();
+            $parsedUrl = parse_url($url);
+
+            $client->request('POST', self::$monitorUrl, [
+                'auth_bearer' => self::$bearerToken,
+                'headers' => ['Content-Type' => 'application/json'],
+                'json' => [
+                    'method'          => strtoupper($method),
+                    'url'             => $url,
+                    'host'            => $parsedUrl['host'] ?? $_SERVER['HTTP_HOST'] ?? 'localhost',
+                    'path'            => $parsedUrl['path'] ?? '/',
+                    'status'          => $statusCode,
+                    'duration'        => round($durationMs, 2),
+                    'memory_usage'    => memory_get_usage(),
+                    'peak_memory'     => memory_get_peak_usage(),
+                    'remote_ip'       => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
+                    'origin'          => php_sapi_name() === 'cli' ? 'CLI' : 'WEB',
+                    'request_body'    => $requestData,
+                    'response_body'   => $responseData,
+                    'exception'       => $exceptionMessage,
+                ],
+                'timeout' => 2.0,
+            ]);
+        } catch (\\Throwable $e) {
+            // Silenciosamente ignora falhas
+        }
+    }
 }`,
 
     guzzle: `use GuzzleHttp\\Client;
